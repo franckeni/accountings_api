@@ -7,7 +7,8 @@ def POETRY_VERSION = "1.8.2"
 //MavenLocalhost
 
 
-node {
+Pipeline {
+    agent any
     stages {
         stage('Initialize') {
             def dockerHome = tool 'DockerLocalhost'
@@ -19,8 +20,10 @@ node {
         }
 
         stage('Make Virtual Env') {
-            withPythonEnv('Python3.12') {
-                sh "pip install poetry==${POETRY_VERSION} && poetry config virtualenvs.in-project true && poetry install --no-root --no-ansi --no-interactio"
+            steps {
+                withPythonEnv('Python3.12') {
+                    sh "pip install poetry==${POETRY_VERSION} && poetry config virtualenvs.in-project true && poetry install --no-root --no-ansi --no-interactio"
+                }
             }
         }
 
@@ -29,8 +32,10 @@ node {
         }
 
         stage('test poetry without pyenvt') {
-            withPythonEnv('Python3.12') {
-                sh "poetry --version"
+            steps {
+                withPythonEnv('Python3.12') {
+                    sh "poetry --version"
+                }
             }
         }
     }
