@@ -52,31 +52,16 @@ pipeline {
             }
         }
 
-        stage('Make Virtual Env') {
+        stage('Make Virtual Env and Test') {
             steps {
                 withPythonEnv("/usr/bin/${params.PYTHON}") {
                     sh "pip install poetry==${POETRY_VERSION} \
                         && poetry config virtualenvs.in-project true \
                         && poetry install --no-root --no-ansi --no-interaction"
-                }
-            }
-        }
 
-        stage('Check python PATH and Worspace path') {
-            steps {
-                script {
-                    sh "${WORKSPACE}"
-                    sh "${PYTHONPATH}"
-                }
-            }
-        }
-
-        stage ('Build Test with pytest') {
-            steps {
-                withPythonEnv("/usr/bin/${params.PYTHON}") {
-                    script {
-                        sh "poetry run pytest ${WORKSPACE}/test/e2e/test.py ${WORKSPACE}/test/unit/test.py ${WORKSPACE}/test/integration/test.py --cov=./ --cov-report=xml"
-                    }
+                    sh "poetry run pytest ${WORKSPACE}/test/e2e/test.py \ 
+                    ${WORKSPACE}/test/unit/test.py \ 
+                    ${WORKSPACE}/test/integration/test.py --cov=./ --cov-report=xml"
                 }
             }
         }
