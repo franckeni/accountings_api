@@ -8,15 +8,17 @@ def POETRY_VERSION = "1.8.2"
 
 
 pipeline {
+    environment {
+        dockerHome = tool "DockerLocalhost"
+        PATH = "$dockerHome/bin:$PATH"
+    }
     agent any
     stages {
-        stage('Initialize') {
-            def dockerHome = tool 'DockerLocalhost'
-            env.PATH = "${dockerHome}/bin:${env.PATH}"
-        }
 
         stage('Checkout') {
-            checkout scm
+            steps {
+                checkout scm
+            }
         }
 
         stage('Make Virtual Env') {
@@ -31,7 +33,7 @@ pipeline {
             sh "poetry --version"
         }
 
-        stage('test poetry without pyenvt') {
+        stage('test poetry with pyenvt') {
             steps {
                 withPythonEnv('Python3.12') {
                     sh "poetry --version"
