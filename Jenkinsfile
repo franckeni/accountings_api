@@ -10,7 +10,7 @@ properties([
     choice(
       name: 'PYTHON',
       description: 'Choose Python version',
-      choices: ["python3.10.9", "python3.11", "python3.11.9", "python3.12.7"].join("\n")
+      choices: ["python3.10", "python3.11", "python3.12"].join("\n")
     ),
     base64File(
       name: 'REQUIREMENTS_FILE',
