@@ -40,9 +40,6 @@ node {
                 }
             }
         }
-    } finaly {
-        deleteDir()
-        //sendEmail(EMAIL_RECIPIENTS)
-    }
+    } 
 }
 
