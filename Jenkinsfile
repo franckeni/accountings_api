@@ -33,7 +33,7 @@ pipeline {
     stage('Make Virtual Env') {
         steps {
             withPythonEnv("/usr/bin/${params.PYTHON}") {
-                sh "pip install poetry==${POETRY_VERSION} 
+                sh "pip install poetry==${POETRY_VERSION} \
                     && poetry config virtualenvs.in-project true 
                     && poetry install --no-root --no-ansi --no-interactio"
                 
