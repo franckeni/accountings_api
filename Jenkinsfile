@@ -30,7 +30,9 @@ pipeline {
         }
 
         stage('test poetry without pyenvt') {
-            sh "poetry --version"
+            steps {
+                sh "poetry --version"
+            }
         }
 
         stage('test poetry with pyenvt') {
