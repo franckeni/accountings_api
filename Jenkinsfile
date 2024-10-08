@@ -63,6 +63,15 @@ pipeline {
             }
         }
 
+        stage('Check python PATH and Worspace path') {
+            steps {
+                script {
+                    sh "${WORKSPACE}"
+                    sh "${PYTHONPATH}"
+                }
+            }
+        }
+
         stage ('Build Test with pytest') {
             steps {
                 withPythonEnv("/usr/bin/${params.PYTHON}") {
