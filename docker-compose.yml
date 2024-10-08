@@ -1,0 +1,41 @@
+services:
+  backend-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: backend-api
+    networks:
+      - accounts-type_default
+    ports:
+      - "8080:8080"
+    environment:
+      APP_ENVIRONMENT: development
+      ALLOWED_ORIGINS: 'http://localhost:4200,http://localhost:4000'
+      DYNAMODB_URL: 'http://dynamodb-local:8000'
+      TABLE_NAME: 'accounting-erp-api'
+      # BASE
+      API_V1_PREFIX: /api/v1
+      DEBUG: true
+      PROJECT_NAME: ACCOUNTINGS ERP API
+      VERSION: 0.1.0
+      VERSION_NUMBER: 1
+      DESCRIPTION: This API was built for AWS SERVERLESS 
+      ADMIN_EMAIL: xxxxxxxxxxxxxxxx@gmail.com
+      ITEMS_PER_USER: 50
+      ACCESS_TOKEN_EXPIRE_MINUTES: 30  # 30 minutes
+      REFRESH_TOKEN_EXPIRE_MINUTES: 10080 # 7 days :> 60 * 24 * 7
+      PRODUCTION: false
+    volumes:
+      - $HOME/.aws/credentials:/home/fastapi/.aws/credentials:ro
+      - $HOME/.aws/config:/home/fastapi/.aws/config:ro
+    #env_file:
+    #  - .env
+
+networks:
+  accounts-type_default:
+    name: docker_default
+    external: true
+
+secrets:
+  aws_creds:
+    external: true

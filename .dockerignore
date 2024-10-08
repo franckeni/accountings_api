@@ -1,0 +1,15 @@
+**/node_modules/
+**/dist
+afmvenv/
+.git
+.vscode/
+.angular/
+npm-debug.log
+.coverage
+.coverage.*
+.aws
+.env.dev
+.env.test
+.venv/
+test
+**__pycache__/

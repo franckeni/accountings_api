@@ -1,0 +1,16 @@
+[flake8]
+max-line-length = 120
+exclude =
+    .git,
+    build,
+    dist,
+    .env.dev,
+    .gitignore,
+    Dockerfile,
+    linter.sh,
+    entrypoint.sh,
+    __pycache__,
+    accounts-type-venv
+    .venv
+max-complexity = 10
+docstring_style=sphinx
