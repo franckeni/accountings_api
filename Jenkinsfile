@@ -91,7 +91,11 @@ pipeline {
         }
 
         stage('Image Prune') {
-            imagePrune(CONTAINER_NAME)
+            steps {
+                script {
+                    imagePrune(CONTAINER_NAME)
+                }
+            }
         }
 
         stage ('Build Python FAstAPI Image and Push It to DockerHUB') {
@@ -108,8 +112,12 @@ pipeline {
         }
 
         stage('Run App') {
-            withCredentials([usernamePassword(credentialsId: 'dockerhubcredentials', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                runApp(CONTAINER_NAME, CONTAINER_TAG, USERNAME, HTTP_PORT, ENV_NAME)
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'dockerhubcredentials', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                        runApp(CONTAINER_NAME, CONTAINER_TAG, USERNAME, HTTP_PORT, ENV_NAME)
+                    }
+                }
             }
         }
     }
