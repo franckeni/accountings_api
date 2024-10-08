@@ -29,7 +29,7 @@ pipeline {
         DOCKERHUB_ID = "fafosoule"
         dockerHome = tool "DockerLocalhost"
         PATH = "$dockerHome/bin:$PATH"
-        PYTHONPATH = $WORKSPACE:$PYTHONPATH
+        PYTHONPATH = "$WORKSPACE:$PYTHONPATH"
     }
     agent any
     options {
