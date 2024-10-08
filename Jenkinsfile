@@ -28,7 +28,7 @@ pipeline {
     timestamps()
   }
   stages {
-    stage("Python"){
+    stage("Python with python env"){
       steps{
         withPythonEnv("/usr/bin/${params.PYTHON}") {
           script {
@@ -48,5 +48,71 @@ pipeline {
         }
       }
     }
+
+    stage('Python version') {
+        steps {
+            echo "python --version"
+        }
+    }
   }
 }
+
+
+/*
+pipeline {
+    environment {
+        dockerHome = tool "DockerLocalhost"
+        PATH = "$dockerHome/bin:$PATH"
+    }
+    agent any
+    stages {
+
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Python version') {
+            steps {
+                echo "python --version"
+            }
+        }
+
+        stage('Make Virtual Env') {
+            steps {
+                withPythonEnv('/usr/bin/python3.12') {
+                    sh "pip install poetry==${POETRY_VERSION} && poetry config virtualenvs.in-project true && poetry install --no-root --no-ansi --no-interactio"
+                    
+                    sh "poetry --version"
+                }
+            }
+        }
+
+        stage('test poetry with pyenvt') {
+            steps {
+                withPythonEnv('/usr/bin/python3.12') {
+                    sh "poetry --version"
+                }
+            }
+        }
+
+        stage('test poetry without pyenvt') {
+            steps {
+                sh "poetry --version"
+            }
+        }
+    }
+    post {
+        always {
+            echo 'Backend FAstAPI build'
+        }
+        success {
+            echo 'Backend FAstAPI build Done Successfully'
+        }
+        failure {
+            echo 'Backend FAstAPI build build Done with failure'
+        }
+    }
+}
+*/
