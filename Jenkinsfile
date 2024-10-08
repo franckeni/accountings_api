@@ -32,14 +32,12 @@ pipeline {
       steps{
         withPythonEnv("/usr/bin/${params.PYTHON}") {
           script {
+            sh "python --version"
+            sh "pip --version"
             if ( env.REQUIREMENTS_FILE.isEmpty() ) {
-              sh "python --version"
-              sh "pip --version"
               sh "echo Requirements file not set. Run Python without requirements file."
             }
             else {
-              sh "python --version"
-              sh "pip --version"
               sh "echo Requirements file found. Run PIP install using requirements file."
               withFileParameter('REQUIREMENTS_FILE') {
                 sh 'cat $REQUIREMENTS_FILE > requirements.txt'
