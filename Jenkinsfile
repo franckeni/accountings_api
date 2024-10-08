@@ -29,31 +29,27 @@ pipeline {
     timestamps()
   }
   stages {
+
+    stage('Make Virtual Env') {
+        steps {
+            withPythonEnv("/usr/bin/${params.PYTHON}") {
+                sh "pip install poetry==${POETRY_VERSION} 
+                    && poetry config virtualenvs.in-project true 
+                    && poetry install --no-root --no-ansi --no-interactio"
+                
+                sh "poetry --version"
+            }
+        }
+    }
+
     stage("Python with python env"){
       steps{
         withPythonEnv("/usr/bin/${params.PYTHON}") {
           script {
-            sh "python --version"
-            sh "pip --version"
-            if ( env.REQUIREMENTS_FILE.isEmpty() ) {
-              sh "echo Requirements file not set. Run Python without requirements file."
-            }
-            else {
-              sh "echo Requirements file found. Run PIP install using requirements file."
-              withFileParameter('REQUIREMENTS_FILE') {
-                sh 'cat $REQUIREMENTS_FILE > requirements.txt'
-              }
-              sh "pip install -r requirements.txt"
-            }
+            sh "poetry --version"
           }
         }
       }
-    }
-
-    stage('Python version') {
-        steps {
-            echo "python --version"
-        }
     }
   }
 }
