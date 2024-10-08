@@ -25,13 +25,8 @@ pipeline {
             steps {
                 withPythonEnv('/usr/bin/python3.12') {
                     sh "pip install poetry==${POETRY_VERSION} && poetry config virtualenvs.in-project true && poetry install --no-root --no-ansi --no-interactio"
+                    sh "poetry --version"
                 }
-            }
-        }
-
-        stage('test poetry without pyenvt') {
-            steps {
-                sh "poetry --version"
             }
         }
 
@@ -40,6 +35,12 @@ pipeline {
                 withPythonEnv('/usr/bin/python3.12') {
                     sh "poetry --version"
                 }
+            }
+        }
+
+        stage('test poetry without pyenvt') {
+            steps {
+                sh "poetry --version"
             }
         }
     }
