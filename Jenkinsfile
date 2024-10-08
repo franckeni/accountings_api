@@ -35,7 +35,7 @@ pipeline {
             withPythonEnv("/usr/bin/${params.PYTHON}") {
                 sh "pip install poetry==${POETRY_VERSION} \
                     && poetry config virtualenvs.in-project true \
-                    && poetry install --no-root --no-ansi --no-interactio"
+                    && poetry install --no-root --no-ansi --no-interaction"
                 
                 sh "poetry --version"
             }
