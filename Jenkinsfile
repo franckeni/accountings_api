@@ -3,7 +3,7 @@ def ENV_NAME = getEnvName(env.BRANCH_NAME)
 def CONTAINER_TAG = getTag(env.BUILD_NUMBER, env.BRANCH_NAME)
 def HTTP_PORT = getHTTPPort(env.BRANCH_NAME)
 def EMAIL_RECIPIENTS = "franckafosoule@gmail.com"
-def POETRY_VERSION = 1.8.2
+def POETRY_VERSION = "1.8.2"
 
 
 //DOCKERHUB_CREDENTIAL
