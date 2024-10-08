@@ -7,7 +7,7 @@ def POETRY_VERSION = "1.8.2"
 //MavenLocalhost
 
 
-Pipeline {
+pipeline {
     agent any
     stages {
         stage('Initialize') {
@@ -37,6 +37,17 @@ Pipeline {
                     sh "poetry --version"
                 }
             }
+        }
+    }
+    post {
+        always {
+            echo 'Backend FAstAPI build'
+        }
+        success {
+            echo 'Backend FAstAPI build Done Successfully'
+        }
+        failure {
+            echo 'Backend FAstAPI build build Done with failure'
         }
     }
 }
