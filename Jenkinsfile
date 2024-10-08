@@ -66,7 +66,7 @@ pipeline {
             steps {
                 withPythonEnv("/usr/bin/${params.PYTHON}") {
                     script {
-                        sh "poetry run pytest test/e2e/test.py test/unit/test.py test/integration/test.py --cov=./ --cov-report=xml"
+                        sh "poetry run pytest ${WORKSPACE}test/e2e/test.py ${WORKSPACE}test/unit/test.py ${WORKSPACE}test/integration/test.py --cov=./ --cov-report=xml"
                     }
                 }
             }
