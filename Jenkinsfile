@@ -135,14 +135,13 @@ pipeline {
 }
 
 def runTest(pythonVersion) {
-    //sh "poetry run pytest test/e2e/test.py test/unit/test.py test/integration/test.py --cov=./ --cov-report=xml"
-    sh "python$pythonVersion -m pytest -v --cov=./ --cov-report=xml"
+    sh "poetry run pytest  --cov=./ --cov-report=xml"
 }
 
 def createVirtualEnvironment(pythonVersion) {
+    sh "rm -r venv"
     sh "python$pythonVersion -m venv venv"
     sh ". venv/bin/activate"
-    //sh ". .pyenv-usr-bin-python$pythonVersion/bin/activate"
     echo "Pyenv Activated"
 }
 
