@@ -61,7 +61,7 @@ pipeline {
                     script {
                         //updateUpgradeInstallPackages()
                         createVirtualEnvironment(params.PYTHON)
-                        poetryConfigAndInstall(params.PYTHON, POETRY_VERSION)
+                        poetryConfigAndInstall(params.PYTHON, POETRY_VERSION, WORKSPACE)
                         //populateAppEnvVariables(WORKSPACE)
                         runTest(params.PYTHON)
                     }
@@ -140,8 +140,8 @@ def runTest(pythonVersion) {
 
 def createVirtualEnvironment(pythonVersion) {
     sh "rm -r venv"
-    sh "python$pythonVersion -m venv venv"
-    sh ". venv/bin/activate"
+    //sh "python$pythonVersion -m venv venv"
+    //sh ". venv/bin/activate"
     echo "Pyenv Activated"
 }
 
@@ -156,7 +156,7 @@ def populateAppEnvVariables(workspace) {
 def poetryConfigAndInstall(pythonVersion, poetryVersion, workspace) {
     sh "pip$pythonVersion install poetry==$poetryVersion \
         && poetry config virtualenvs.in-project true \
-        && poetry config virtualenvs.path $workspace
+        && poetry config virtualenvs.path $workspace/
         && poetry install --no-root --no-ansi --no-interaction"
     
     echo "Show poetry env configs"
