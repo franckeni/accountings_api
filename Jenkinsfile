@@ -55,6 +55,12 @@ pipeline {
             }
         }
 
+        stage('Export AWS variables') {
+            steps {
+                sh "export AWS_DEFAULT_REGION='eu-west-3'"
+            }
+        }
+
         stage('Make Virtual Env and Test') {
             steps {
                 withPythonEnv("/usr/bin/python${params.PYTHON}") {
@@ -149,6 +155,7 @@ def updateUpgradeInstallPackages() {
 
 def populateAppEnvVariables(workspace) {
     sh "envsubst < $workspace/.env.temp > $workspace/.env"
+    sh "envsubst < $workspace/aws.temp > $workspace/aws/config"
 }
 
 def poetryConfigAndInstall(pythonVersion, poetryVersion) {
