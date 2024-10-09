@@ -62,7 +62,7 @@ pipeline {
                         createVirtualEnvironment(params.PYTHON)
                         poetryConfigAndInstall(params.PYTHON, POETRY_VERSION)
                         populateAppEnvVariables(WORKSPACE)
-                        //runTest()
+                        runTest()
                     }
                 }
             }
@@ -89,13 +89,13 @@ pipeline {
             }
         }
 
-        stage('Image Prune') {
-            steps {
-                script {
-                    imagePrune(CONTAINER_NAME)
-                }
-            }
-        }
+        //stage('Image Prune') {
+        //    steps {
+        //        script {
+        //            imagePrune(CONTAINER_NAME)
+        //        }
+        //    }
+        //}
 
         /*stage ('Build Python FAstAPI Image and Push It to DockerHUB') {
             steps {
@@ -120,14 +120,24 @@ pipeline {
             }
         }*/
     }
+    post {
+        always {
+            echo 'Backend FAstAPI build'
+        }
+        success {
+            echo 'Backend FAstAPI build Done Successfully'
+        }
+        failure {
+            echo 'Backend FAstAPI build build Done with failure'
+        }
+    }
 }
 
 def runTest() {
     sh "poetry run pytest test/e2e/test.py test/unit/test.py test/integration/test.py --cov=./ --cov-report=xml"
 }
-//.pyenv-usr-bin-python3.12
+
 def createVirtualEnvironment(pythonVersion) {
-    //sh "python$pythonVersion -m venv venv"
     sh ". .pyenv-usr-bin-python$pythonVersion/bin/activate"
     echo "Pyenv Activated"
 }
