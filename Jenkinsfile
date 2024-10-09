@@ -72,8 +72,11 @@ pipeline {
             steps{
                 withPythonEnv("/usr/bin/python${params.PYTHON}") {
                     script {
+                        def sonarqubeScannerHome = tool 'sonarqubeScanner'
+                        echo "SonarQube Scanner installation directory: ${sonarqubeScannerHome}"
                         withSonarQubeEnv('sonaqubeServer') {
-                            sh "pysonar-scanner -Dsonar.token=${pysonarCredential}"
+                            //sh "pysonar-scanner -Dsonar.token=${pysonarCredential}"
+                            sh "${sonarqubeScannerHome}/bin/sonar-scanner"
                         }
                         timeout(time: 1, unit: 'MINUTES') {
                             def qq = waitForQualityGate()
