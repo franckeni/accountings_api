@@ -1,4 +1,4 @@
-def CONTAINER_NAME = "accountings-API"
+def CONTAINER_NAME = "accountings-API-" + env.BRANCH_NAME
 def ENV_NAME = getEnvName(env.BRANCH_NAME)
 def CONTAINER_TAG = getTag(env.BUILD_NUMBER, env.BRANCH_NAME)
 def HTTP_PORT = getHTTPPort(env.BRANCH_NAME)
@@ -84,15 +84,15 @@ pipeline {
             }
         }
 
-        //stage('Image Prune') {
-        //    steps {
-        //        script {
-        //            imagePrune(CONTAINER_NAME)
-        //        }
-        //    }
-        //}
+        stage('Image Prune') {
+            steps {
+                script {
+                    imagePrune(CONTAINER_NAME)
+                }
+            }
+        }
 
-        /*stage ('Build Python FAstAPI Image and Push It to DockerHUB') {
+        stage ('Build Python FAstAPI Image and Push It to DockerHUB') {
             steps {
                 script {
                     docker.withRegistry('', 'DOCKERHUB_CREDENTIAL') {
@@ -113,7 +113,7 @@ pipeline {
                     }
                 }
             }
-        }*/
+        }
     }
     post {
         always {
@@ -167,7 +167,15 @@ def pushToImage(containerName, tag, dockerUser, dockerPassword) {
 
 def runApp(containerName, tag, dockerHubUser, httpPort, envName) {
     sh "docker pull  $dockerHubUser/$containerName"
-    sh "docker run --rm --env SPRING_ACTIVE_PROFILES=$envName -d -p $httpPort:$httpPort --name $containerName $dockerHubUser/$containerName:$tag"
+    sh "docker run --rm --env SPRING_ACTIVE_PROFILES=$envName \
+        -d -p $httpPort:$httpPort --name $containerName $dockerHubUser/$containerName:$tag \ 
+        -e APP_ENVIRONMENT=${ENV_NAME} \
+            ALLOWED_ORIGINS=http://localhost:4200,http://localhost:4000 \
+            DYNAMODB_URL=http://localhost:8000 \
+            TABLE_NAME=accounting-erp-${ENV_NAME} \
+            PROJECT_NAME=STAM & HAEN HA2BI API - ${ENV_NAME} \
+            VERSION="${VERSION}"
+        "
     echo "Application started on port:  ${httpPort} (http)"
 }
 
