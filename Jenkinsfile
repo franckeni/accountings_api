@@ -168,14 +168,14 @@ def pushToImage(containerName, tag, dockerUser, dockerPassword) {
 
 def runApp(containerName, tag, dockerHubUser, httpPort, envName) {
     sh "docker pull  $dockerHubUser/$containerName"
-    sh "docker run --rm --env SPRING_ACTIVE_PROFILES=$envName \
-        -d -p $httpPort:$httpPort --name $containerName $dockerHubUser/$containerName:$tag \ 
-        -e APP_ENVIRONMENT=${ENV_NAME} \
-        -e ALLOWED_ORIGINS=http://localhost:4200,http://localhost:4000 \
-        -e DYNAMODB_URL=http://localhost:8000 \
-        -e TABLE_NAME=accounting-erp-${ENV_NAME} \
-        -e PROJECT_NAME=STAM & HAEN HA2BI API - ${ENV_NAME} \
-        -e VERSION=${APP_VERSION}"
+    sh """docker run --rm --env SPRING_ACTIVE_PROFILES=$envName 
+        -d -p $httpPort:$httpPort --name $containerName $dockerHubUser/$containerName:$tag 
+        -e APP_ENVIRONMENT=${ENV_NAME} 
+        -e ALLOWED_ORIGINS=http://localhost:4200,http://localhost:4000 
+        -e DYNAMODB_URL=http://localhost:8000 
+        -e TABLE_NAME=accounting-erp-${ENV_NAME} 
+        -e PROJECT_NAME=STAM & HAEN HA2BI API - ${ENV_NAME} 
+        -e VERSION=${APP_VERSION}"""
     echo "Application started on port:  ${httpPort} (http)"
 }
 
