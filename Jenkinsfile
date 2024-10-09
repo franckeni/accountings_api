@@ -156,7 +156,7 @@ def populateAppEnvVariables(workspace) {
 def poetryConfigAndInstall(pythonVersion, poetryVersion, workspace) {
     sh "pip$pythonVersion install poetry==$poetryVersion \
         && poetry config virtualenvs.in-project true \
-        && poetry config virtualenvs.path ${workspace}
+        && poetry config virtualenvs.path $workspace \
         && poetry install --no-root --no-ansi --no-interaction"
     
     echo "Show poetry env configs"
