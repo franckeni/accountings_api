@@ -26,5 +26,11 @@ class UpdateAccountsType(BaseAccountsType):
     parent_id: Optional[str] | None = None
 
     @classmethod
-    def create(cls, id_: Optional[str], title: Optional[str], class_number: Optional[int], parent_id: Optional[str] | None):
+    def create(
+        cls,
+        id_: Optional[str],
+        title: Optional[str],
+        class_number: Optional[int],
+        parent_id: Optional[str] | None,
+    ):
         return cls(id_, title, class_number, parent_id)

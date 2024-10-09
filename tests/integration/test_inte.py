@@ -1,22 +1,7 @@
-import uuid
 import os
-from pathlib import Path
+import uuid
 
 import pytest
-from dotenv import load_dotenv
-
-from shared.infrastructure.adapters.dynamodb_table_adapter import DynamodbTableAdapter
-from shared.utils.dynamodb_data_transformer import DynamodbDataTransformer
-from shared.utils.dynamodb_utils import DynamodbUtils
-
-if Path(".env.test").exists():
-    load_dotenv(dotenv_path=(Path(".env.test")))
-elif Path(".env.dev").exists():
-    load_dotenv(dotenv_path=(Path(".env.dev")))
-else:
-    load_dotenv(".env")
-
-from fastapi import status
 from moto import mock_aws
 
 from accounts_type.domains.schemas.base_accounts_type import BaseAccountsType
@@ -24,9 +9,11 @@ from accounts_type.presentation.view_models.accounts_type import (
     CreateAccountsType,
     UpdateAccountsType,
 )
-from shared.infrastructure.fastapi.settings import Settings
+from shared.infrastructure.adapters.dynamodb_table_adapter import DynamodbTableAdapter
 from shared.infrastructure.migrations.create_table import create_dynamodb_table
 from shared.infrastructure.repositories.dynamodb_repository import DynamodbRepository
+from shared.utils.dynamodb_data_transformer import DynamodbDataTransformer
+from shared.utils.dynamodb_utils import DynamodbUtils
 
 
 @pytest.fixture(scope="function")
@@ -58,7 +45,7 @@ def dynamodb_table_adapter():
 def dynamodb_table(dynamodb_table_adapter, aws_credentials, config_infos):
     with mock_aws():
         dynamodb = dynamodb_table_adapter.get_dynamodb()
-        table_name=os.getenv("TABLE_NAME", "test-dynamodb")
+        table_name = os.getenv("TABLE_NAME", "test-dynamodb")
 
         table = create_dynamodb_table(table_name, dynamodb)
 
@@ -192,5 +179,3 @@ def test_repository_delete_accounts_type_retrieved_by_id(
     response = accounts_type_repository._delete(created_accounts_type.get("id"))
 
     assert response is True
-
-
