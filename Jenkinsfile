@@ -110,7 +110,7 @@ pipeline {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'DOCKERHUB_CREDENTIAL', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                        runApp(CONTAINER_NAME, CONTAINER_TAG, USERNAME, HTTP_PORT, ENV_NAME)
+                        runApp(CONTAINER_NAME, CONTAINER_TAG, USERNAME, HTTP_PORT, ENV_NAME, APP_VERSION)
                     }
                 }
             }
@@ -166,17 +166,17 @@ def pushToImage(containerName, tag, dockerUser, dockerPassword) {
     echo "Image push complete"
 }
 
-def runApp(containerName, tag, dockerHubUser, httpPort, envName) {
+def runApp(containerName, tag, dockerHubUser, httpPort, envName, version) {
     sh "docker pull  $dockerHubUser/$containerName"
     sh """docker run --rm --env SPRING_ACTIVE_PROFILES=$envName 
         -d -p $httpPort:$httpPort --name $containerName $dockerHubUser/$containerName:$tag 
-        -e APP_ENVIRONMENT=${ENV_NAME} 
+        -e APP_ENVIRONMENT=$envName
         -e ALLOWED_ORIGINS=http://localhost:4200,http://localhost:4000 
         -e DYNAMODB_URL=http://localhost:8000 
-        -e TABLE_NAME=accounting-erp-${ENV_NAME} 
-        -e PROJECT_NAME=STAM & HAEN HA2BI API - ${ENV_NAME} 
-        -e VERSION=${APP_VERSION}"""
-    echo "Application started on port:  ${httpPort} (http)"
+        -e TABLE_NAME=accounting-erp-$envName
+        -e PROJECT_NAME=STAM & HAEN HA2BI API - $envName
+        -e VERSION=$version"""
+    echo "Application started on port:  $httpPort (http)"
 }
 
 def sendEmail(recipients) {
