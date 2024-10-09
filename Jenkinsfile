@@ -1,9 +1,10 @@
-def CONTAINER_NAME = "accountings-API-" + env.BRANCH_NAME
 def ENV_NAME = getEnvName(env.BRANCH_NAME)
+def CONTAINER_NAME = "accountings-API-" + ENV_NAME
 def CONTAINER_TAG = getTag(env.BUILD_NUMBER, env.BRANCH_NAME)
 def HTTP_PORT = getHTTPPort(env.BRANCH_NAME)
 def EMAIL_RECIPIENTS = "franckafosoule@gmail.com"
 def POETRY_VERSION = "1.8.2"
+def APP_VERSION = "0.1.0"
 
 
 properties([
@@ -170,12 +171,11 @@ def runApp(containerName, tag, dockerHubUser, httpPort, envName) {
     sh "docker run --rm --env SPRING_ACTIVE_PROFILES=$envName \
         -d -p $httpPort:$httpPort --name $containerName $dockerHubUser/$containerName:$tag \ 
         -e APP_ENVIRONMENT=${ENV_NAME} \
-            ALLOWED_ORIGINS=http://localhost:4200,http://localhost:4000 \
-            DYNAMODB_URL=http://localhost:8000 \
-            TABLE_NAME=accounting-erp-${ENV_NAME} \
-            PROJECT_NAME=STAM & HAEN HA2BI API - ${ENV_NAME} \
-            VERSION="${VERSION}"
-        "
+        -e ALLOWED_ORIGINS=http://localhost:4200,http://localhost:4000 \
+        -e DYNAMODB_URL=http://localhost:8000 \
+        -e TABLE_NAME=accounting-erp-${ENV_NAME} \
+        -e PROJECT_NAME=STAM & HAEN HA2BI API - ${ENV_NAME} \
+        -e VERSION=${APP_VERSION}"
     echo "Application started on port:  ${httpPort} (http)"
 }
 
