@@ -13,7 +13,7 @@ properties([
     choice(
       name: 'PYTHON',
       description: 'Choose Python version',
-      choices: ["python3.12", "python3.11", "python3.10"].join("\n"),
+      choices: ["3.12", "3.11", "3.10"].join("\n"),
     ),
     base64File(
       name: 'REQUIREMENTS_FILE',
@@ -54,7 +54,7 @@ pipeline {
 
         stage('Make Virtual Env and Test') {
             steps {
-                withPythonEnv("/usr/bin/${params.PYTHON}") {
+                withPythonEnv("/usr/bin/python${params.PYTHON}") {
                     script {
                         //updateUpgradeInstallPackages()
                         createVirtualEnvironment(params.PYTHON)
@@ -68,7 +68,7 @@ pipeline {
 
         stage("Sonarqube Analysis"){
             steps{
-                withPythonEnv("/usr/bin/${params.PYTHON}") {
+                withPythonEnv("/usr/bin/python${params.PYTHON}") {
                     script {
                         withSonarQubeEnv('sonaqubeServer') {
                             sh "pysonar-scanner"
