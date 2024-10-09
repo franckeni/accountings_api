@@ -23,12 +23,12 @@ WORKDIR $APP_HOME
 
 COPY --from=build /app/requirements.txt /app/.env.temp $APP_HOME/
 
-RUN set -eux \
+RUN set -ex \
     groupadd -r fastapi \
     # user non root
     && useradd --no-log-init -r -g fastapi fastapi \
     # 
-    && apt-get update \
+    && apt-get update -y\
     && apt-get upgrade -y \
     #
     && apt-get --no-install-recommends install -y curl gettext-base \
