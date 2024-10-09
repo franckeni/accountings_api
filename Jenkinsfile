@@ -13,7 +13,6 @@ properties([
     choice(
       name: 'PYTHON',
       description: 'Choose Python version',
-      defaultValue: "python3.12",
       choices: ["python3.12", "python3.11", "python3.10"].join("\n"),
     ),
     base64File(
@@ -49,7 +48,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 checkout scm
-                sh 'ls -lah'
+                sh 'ls -la'
             }
         }
 
@@ -57,7 +56,7 @@ pipeline {
             steps {
                 withPythonEnv("/usr/bin/${params.PYTHON}") {
                     script {
-                        updateUpgradeInstallPackages()
+                        //updateUpgradeInstallPackages()
                         createVirtualEnvironment()
                         poetryConfigAndInstall(params.PYTHON, POETRY_VERSION)
                         populateAppEnvVariables(WORKSPACE)
@@ -122,8 +121,9 @@ def runTest() {
     sh "poetry run pytest test/e2e/test.py test/unit/test.py test/integration/test.py --cov=./ --cov-report=xml"
 }
 
-def createVirtualEnvironment() {
-    sh "python -m venv venv && source venv/bin/activate"
+def createVirtualEnvironment(pythonVersion) {
+    sh "python$pythonVersion -m venv venv && source venv/bin/activate"
+    echo "Venv created"
 }
 
 def updateUpgradeInstallPackages() {
@@ -138,6 +138,8 @@ def poetryConfigAndInstall(pythonVersion, poetryVersion) {
     sh "pip$pythonVersion install poetry==$poetryVersion \
         && poetry config virtualenvs.in-project false \
         && poetry install --no-root --no-ansi --no-interaction"
+    
+    echo "Show poetry env configs"
     sh "poetry env list"
     sh "poetry env info"
     sh "poetry config --list"
