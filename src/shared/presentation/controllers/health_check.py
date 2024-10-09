@@ -9,8 +9,6 @@ router = APIRouter()
 
 @router.get("/health-check")
 @inject
-def health_check(config: Settings = Depends(Provide[AppContainer.config.factory])):
-    
-    version = config.get("version", "0.1.0")
+def health_check():
 
-    return {"message": f"OK evrything works fine and version is: {version}"}
+    return {"message": f"OK evrything works fine"}
