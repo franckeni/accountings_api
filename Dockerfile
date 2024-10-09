@@ -24,16 +24,12 @@ WORKDIR $APP_HOME
 COPY --from=build /app/requirements.txt /app/.env.temp $APP_HOME/
 
 RUN set -ex \
-    groupadd -r fastapi \
-    # user non root
+    && groupadd -r fastapi \
     && useradd --no-log-init -r -g fastapi fastapi \
-    # 
     && apt-get update -y\
     && apt-get upgrade -y \
-    #
     && apt-get --no-install-recommends install -y curl gettext-base \
     && pip install -r "$APP_HOME"/requirements.txt \
-    # 
     && apt-get autoremove -y \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
