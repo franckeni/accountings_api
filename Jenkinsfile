@@ -122,7 +122,8 @@ def runTest() {
 }
 
 def createVirtualEnvironment(pythonVersion) {
-    sh "python$pythonVersion -m venv venv && source venv/bin/activate"
+    sh "python$pythonVersion -m venv venv"
+    sh '''#!/bin/bash source venv/bin/activate'''
     echo "Venv created"
 }
 
