@@ -1,4 +1,5 @@
 import uuid
+import os
 from pathlib import Path
 
 import pytest
@@ -27,8 +28,22 @@ from shared.infrastructure.fastapi.settings import Settings
 from shared.infrastructure.migrations.create_table import create_dynamodb_table
 from shared.infrastructure.repositories.dynamodb_repository import DynamodbRepository
 
-# Get the global configuration
-config = Settings()
+
+@pytest.fixture(scope="function")
+def aws_credentials():
+    """Mocked AWS Credentials for moto."""
+    os.environ["AWS_ACCESS_KEY_ID"] = "testing"
+    os.environ["AWS_SECRET_ACCESS_KEY"] = "testing"
+    os.environ["AWS_SECURITY_TOKEN"] = "testing"
+    os.environ["AWS_SESSION_TOKEN"] = "testing"
+    os.environ["AWS_DEFAULT_REGION"] = "us-east-1"
+
+
+@pytest.fixture(scope="function")
+def config_infos():
+    """Mocked global configuration for moto."""
+    os.environ["TABLE_NAME"] = "accountings-erp-api"
+    os.environ["DYNAMODB_URL"] = ""
 
 
 @pytest.fixture(scope="function")
@@ -36,15 +51,16 @@ def dynamodb_table_adapter():
     """
     Return a mocked dynamodb client
     """
-    return DynamodbTableAdapter(table_name=config.TABLE_NAME)
+    return DynamodbTableAdapter(table_name=os.getenv("TABLE_NAME", "test-dynamodb"))
 
 
 @pytest.fixture(scope="function")
-def dynamodb_table(dynamodb_table_adapter):
+def dynamodb_table(dynamodb_table_adapter, aws_credentials, config_infos):
     with mock_aws():
         dynamodb = dynamodb_table_adapter.get_dynamodb()
+        table_name=os.getenv("TABLE_NAME", "test-dynamodb")
 
-        table = create_dynamodb_table(config.TABLE_NAME, dynamodb)
+        table = create_dynamodb_table(table_name, dynamodb)
 
         yield table
 
@@ -52,7 +68,8 @@ def dynamodb_table(dynamodb_table_adapter):
 # Test without Repository class
 def test_create_accounts_type_retrieved_by_id(dynamodb_table_adapter, dynamodb_table):
     dynamodb = dynamodb_table_adapter.get_dynamodb()
-    table = dynamodb.Table(config.TABLE_NAME)
+    table_name = os.getenv("TABLE_NAME", "test-dynamodb")
+    table = dynamodb.Table(table_name)
 
     datas = {
         "id": f"{""}{uuid.uuid4().hex}",
