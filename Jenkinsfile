@@ -49,21 +49,19 @@ pipeline {
         stage('Checkout') {
             steps {
                 checkout scm
+                sh 'ls -lah'
             }
         }
 
         stage('Make Virtual Env and Test') {
             steps {
                 withPythonEnv("/usr/bin/${params.PYTHON}") {
-                    //sh "python -m venv venv"
-                    sh "pip install poetry==${POETRY_VERSION} \
-                        && poetry config virtualenvs.in-project true \
-                        && poetry install --no-root --no-ansi --no-interaction"
-                    sh "poetry env list"
-                    sh "poetry env info"
-                    sh "poetry config --list"
-                    dir('.') {
-                        sh "python -m pytest test/e2e/test.py test/unit/test.py test/integration/test.py --cov=./ --cov-report=xml"
+                    script {
+                        updateUpgradeInstallPackages()
+                        createVirtualEnvironment()
+                        poetryConfigAndInstall(params.PYTHON, POETRY_VERSION)
+                        populateAppEnvVariables(WORKSPACE)
+                        //runTest()
                     }
                 }
             }
@@ -74,7 +72,7 @@ pipeline {
                 withPythonEnv("/usr/bin/${params.PYTHON}") {
                     script {
                         withSonarQubeEnv('sonaqubeServer') {
-                            sh "pysonar-scanner "
+                            sh "pysonar-scanner"
                         }
                         timeout(time: 1, unit: 'MINUTES') {
                             def qq = waitForQualityGate()
@@ -95,7 +93,7 @@ pipeline {
             }
         }
 
-        stage ('Build Python FAstAPI Image and Push It to DockerHUB') {
+        /*stage ('Build Python FAstAPI Image and Push It to DockerHUB') {
             steps {
                 script {
                     docker.withRegistry('', 'DOCKERHUB_CREDENTIAL') {
@@ -116,8 +114,33 @@ pipeline {
                     }
                 }
             }
-        }
+        }*/
     }
+}
+
+def runTest() {
+    sh "poetry run pytest test/e2e/test.py test/unit/test.py test/integration/test.py --cov=./ --cov-report=xml"
+}
+
+def createVirtualEnvironment() {
+    sh "python -m venv venv && source venv/bin/activate"
+}
+
+def updateUpgradeInstallPackages() {
+    sh "apt-get update && apt-get upgrade -y"
+}
+
+def populateAppEnvVariables(workspace) {
+    sh "envsubst < $workspace/.env.temp > $workspace/.env"
+}
+
+def poetryConfigAndInstall(pythonVersion, poetryVersion) {
+    sh "pip$pythonVersion install poetry==$poetryVersion \
+        && poetry config virtualenvs.in-project false \
+        && poetry install --no-root --no-ansi --no-interaction"
+    sh "poetry env list"
+    sh "poetry env info"
+    sh "poetry config --list"
 }
 
 def imagePrune(containerName) {

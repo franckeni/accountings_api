@@ -1,3 +1,6 @@
+# Install envsubst
+apt-get install -y gettext-base
+
 # Run a test
 poetry run pytest -v
 
