@@ -58,8 +58,9 @@ pipeline {
                     sh "pip install poetry==${POETRY_VERSION} \
                         && poetry config virtualenvs.in-project true \
                         && poetry install --no-root --no-ansi --no-interaction"
-
-                    sh "poetry run python3 -m pytest ${WORKSPACE}/test/e2e/test.py ${WORKSPACE}/test/unit/test.py ${WORKSPACE}/test/integration/test.py --cov=./ --cov-report=xml"
+                    dir('.') {
+                        sh "poetry run pytest /test/e2e/test.py /test/unit/test.py /test/integration/test.py --cov=./ --cov-report=xml"
+                    }
                 }
             }
         }
