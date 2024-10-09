@@ -15,7 +15,11 @@ def config_infos():
 
 @pytest.fixture
 def client():
-    api.title = "Testing Accountings API"
+
+    def title():
+        yield "Testing Accountings API"
+
+    api.dependency_overrides[title] = title
 
     return TestClient(api)
 

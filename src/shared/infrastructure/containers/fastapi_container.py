@@ -14,7 +14,6 @@ class FastApiContainer(containers.DeclarativeContainer):
 
     factory = providers.Singleton(
         FastAPI,
-        title=config.project_name,
         root_path=config.api_v1_prefix,
         openapi_url="/api/v1/openapi.json",
         middleware=MiddlewareContainer.factory,
