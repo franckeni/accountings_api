@@ -57,7 +57,7 @@ pipeline {
                 withPythonEnv("/usr/bin/${params.PYTHON}") {
                     script {
                         //updateUpgradeInstallPackages()
-                        createVirtualEnvironment()
+                        createVirtualEnvironment(params.PYTHON)
                         poetryConfigAndInstall(params.PYTHON, POETRY_VERSION)
                         populateAppEnvVariables(WORKSPACE)
                         //runTest()
