@@ -21,7 +21,7 @@ FROM python:3.12-slim AS final
 ENV APP_HOME=/home/app
 WORKDIR $APP_HOME
 
-COPY --from=build /app/requirements.txt /app/.env.temp $APP_HOME
+COPY --from=build /app/requirements.txt /app/.env.temp $APP_HOME/
 
 RUN set -eux \
     groupadd -r fastapi \
