@@ -134,8 +134,9 @@ pipeline {
     }
 }
 
-def runTest() {
-    sh "poetry run pytest test/e2e/test.py test/unit/test.py test/integration/test.py --cov=./ --cov-report=xml"
+def runTest(pythonVersion) {
+    //sh "poetry run pytest test/e2e/test.py test/unit/test.py test/integration/test.py --cov=./ --cov-report=xml"
+    sh "python$pythonVersion -m pytest -v --cov=./ --cov-report=xml"
 }
 
 def createVirtualEnvironment(pythonVersion) {
