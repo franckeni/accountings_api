@@ -60,7 +60,7 @@ pipeline {
                 withPythonEnv("/usr/bin/python${params.PYTHON}") {
                     script {
                         //updateUpgradeInstallPackages()
-                        createVirtualEnvironment(params.PYTHON)
+                        //createVirtualEnvironment(params.PYTHON)
                         poetryConfigAndInstall(params.PYTHON, POETRY_VERSION, WORKSPACE)
                         //populateAppEnvVariables(WORKSPACE)
                         runTest(params.PYTHON)
@@ -135,13 +135,12 @@ pipeline {
 }
 
 def runTest(pythonVersion) {
-    sh "poetry run pytest  --cov=./ --cov-report=xml"
+    sh "poetry run pytest -v --cov=./ --cov-report=xml"
 }
 
 def createVirtualEnvironment(pythonVersion) {
-    sh "rm -r venv"
     //sh "python$pythonVersion -m venv venv"
-    //sh ". venv/bin/activate"
+    sh ". .pyenv-usr-bin-python$pythonVersion/bin/activate"
     echo "Pyenv Activated"
 }
 

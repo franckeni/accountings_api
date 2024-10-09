@@ -1,5 +1,5 @@
-from src.accounts_type.domains.schemas.base_accounts_type import BaseAccountsType
-from src.accounts_type.presentation.view_models.accounts_type import ReadAccountsType
+from accounts_type.domains.schemas.base_accounts_type import BaseAccountsType
+from accounts_type.presentation.view_models.accounts_type import ReadAccountsType
 
 
 def test_base_accounts_type():
