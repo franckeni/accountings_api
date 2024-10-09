@@ -1,8 +1,5 @@
-from dependency_injector.wiring import Provide, inject
-from fastapi import APIRouter, Depends
-
-from shared.infrastructure.containers.app_container import AppContainer
-from shared.infrastructure.fastapi.settings import Settings
+from dependency_injector.wiring import inject
+from fastapi import APIRouter
 
 router = APIRouter()
 

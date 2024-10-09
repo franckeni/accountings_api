@@ -42,8 +42,8 @@ pipeline {
         stage("Initialize") {
             steps {
                 script {
-                        echo "${BUILD_NUMBER} - ${env.BUILD_ID} on ${env.JENKINS_URL}"
-                        echo "Branch Specifier :: ${env.BRANCH_NAME}"
+                    echo "${BUILD_NUMBER} - ${env.BUILD_ID} on ${env.JENKINS_URL}"
+                    echo "Branch Specifier :: ${env.BRANCH_NAME}"
                 }
             }
         }
@@ -55,15 +55,12 @@ pipeline {
             }
         }
 
-        stage('Make Virtual Env and Test') {
+        stage('Make Virtual Env and run the Test') {
             steps {
                 withPythonEnv("/usr/bin/python${params.PYTHON}") {
                     script {
-                        //updateUpgradeInstallPackages()
-                        //createVirtualEnvironment(params.PYTHON)
                         poetryConfigAndInstall(params.PYTHON, POETRY_VERSION, WORKSPACE)
-                        //populateAppEnvVariables(WORKSPACE)
-                        runTest(params.PYTHON)
+                        sh "poetry run pytest -v --cov=./ --cov-report=xml"
                     }
                 }
             }
@@ -76,13 +73,12 @@ pipeline {
                         def sonarqubeScannerHome = tool 'sonarqubeScanner'
                         echo "SonarQube Scanner installation directory: ${sonarqubeScannerHome}"
                         withSonarQubeEnv('sonaqubeServer') {
-                            //sh "pysonar-scanner -Dsonar.token=${pysonarCredential}"
                             sh "${sonarqubeScannerHome}/bin/sonar-scanner"
                         }
                         timeout(time: 1, unit: 'MINUTES') {
-                            def qq = waitForQualityGate()
-                            if (qq.status != 'OK') {
-                                error "Pipeline aborted due to quality gate failure: ${qq.status}"
+                            def wfqg = waitForQualityGate()
+                            if (wfqg.status != 'OK') {
+                                error "Pipeline aborted due to quality gate failure: ${wfqg.status}"
                             }
                         }
                     }
@@ -129,28 +125,11 @@ pipeline {
             echo 'Backend FAstAPI build Done Successfully'
         }
         failure {
-            echo 'Backend FAstAPI build build Done with failure'
+            echo 'Backend FAstAPI build Done with failure'
         }
     }
 }
 
-def runTest(pythonVersion) {
-    sh "poetry run pytest -v --cov=./ --cov-report=xml"
-}
-
-def createVirtualEnvironment(pythonVersion) {
-    //sh "python$pythonVersion -m venv venv"
-    sh ". .pyenv-usr-bin-python$pythonVersion/bin/activate"
-    echo "Pyenv Activated"
-}
-
-def updateUpgradeInstallPackages() {
-    sh "apt-get update && apt-get upgrade -y"
-}
-
-def populateAppEnvVariables(workspace) {
-    sh "envsubst < $workspace/.env.temp > $workspace/.env"
-}
 
 def poetryConfigAndInstall(pythonVersion, poetryVersion, workspace) {
     sh "pip$pythonVersion install poetry==$poetryVersion \
