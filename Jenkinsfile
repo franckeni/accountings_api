@@ -6,9 +6,6 @@ def EMAIL_RECIPIENTS = "franckafosoule@gmail.com"
 def POETRY_VERSION = "1.8.2"
 
 
-//DOCKERHUB_CREDENTIAL
-//MavenLocalhost
-// credentials('sonarqubeToken')
 properties([
   parameters([
     choice(
@@ -60,6 +57,7 @@ pipeline {
                 withPythonEnv("/usr/bin/python${params.PYTHON}") {
                     script {
                         poetryConfigAndInstall(params.PYTHON, POETRY_VERSION, WORKSPACE)
+                        populateAppEnvVariables(WORKSPACE)
                         sh "poetry run pytest -v --cov=./ --cov-report=xml"
                     }
                 }
@@ -130,6 +128,11 @@ pipeline {
     }
 }
 
+
+
+def populateAppEnvVariables(workspace) {
+    sh "envsubst < $workspace/.env.temp > $workspace/.env"
+}
 
 def poetryConfigAndInstall(pythonVersion, poetryVersion, workspace) {
     sh "pip$pythonVersion install poetry==$poetryVersion \
