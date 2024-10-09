@@ -169,11 +169,11 @@ def pushToImage(containerName, tag, dockerUser, dockerPassword) {
 def runApp(containerName, tag, dockerHubUser, httpPort, envName, version) {
     sh "docker pull  $dockerHubUser/$containerName"
     sh "docker run \
+        --name $containerName $dockerHubUser/$containerName:$tag  \
         --rm \
         -d \
         -p \
         $httpPort:$httpPort \
-        --name $containerName $dockerHubUser/$containerName:$tag  \
         --env APP_ENVIRONMENT=$envName  \
         --env ALLOWED_ORIGINS=http://localhost:4200,http://localhost:4000  \
         --env DYNAMODB_URL=http://localhost:8000  \
