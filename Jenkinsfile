@@ -98,7 +98,7 @@ pipeline {
                 script {
                     docker.withRegistry('', 'DOCKERHUB_CREDENTIAL') {
                         def dockerImage = docker.build("${DOCKERHUB_ID}/${CONTAINER_NAME}:${CONTAINER_TAG}", 
-                            "--network=host --pull --no-cache")
+                            "--network=host --pull --no-cache .")
                         dockerImage.push();
                         dockerImage.push('latest');
                     }
