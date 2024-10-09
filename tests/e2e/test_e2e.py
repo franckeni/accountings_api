@@ -36,5 +36,5 @@ def test_health_check(client):
 
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == {
-        "message": f"OK evrything works fine"
+        "message": "OK evrything works fine"
     }

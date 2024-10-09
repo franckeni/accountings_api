@@ -11,4 +11,4 @@ router = APIRouter()
 @inject
 def health_check():
 
-    return {"message": f"OK evrything works fine"}
+    return {"message": "OK evrything works fine"}
