@@ -155,7 +155,7 @@ def updateUpgradeInstallPackages() {
 
 def populateAppEnvVariables(workspace) {
     sh "envsubst < $workspace/.env.temp > $workspace/.env"
-    sh "envsubst < $workspace/aws.temp > $workspace/aws/config"
+    sh "mkdir $workspace/aws/ && envsubst < $workspace/aws.temp > $workspace/aws/config"
 }
 
 def poetryConfigAndInstall(pythonVersion, poetryVersion) {
