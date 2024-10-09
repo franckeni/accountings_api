@@ -63,7 +63,7 @@ pipeline {
                         createVirtualEnvironment(params.PYTHON)
                         poetryConfigAndInstall(params.PYTHON, POETRY_VERSION)
                         //populateAppEnvVariables(WORKSPACE)
-                        runTest()
+                        runTest(params.PYTHON)
                     }
                 }
             }
