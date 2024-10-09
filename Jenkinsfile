@@ -8,6 +8,7 @@ def POETRY_VERSION = "1.8.2"
 
 //DOCKERHUB_CREDENTIAL
 //MavenLocalhost
+// credentials('sonarqubeToken')
 properties([
   parameters([
     choice(
@@ -27,6 +28,7 @@ pipeline {
     environment {
         DOCKERHUB_ID = "fafosoule"
         dockerHome = tool "DockerLocalhost"
+        pysonarCredential = credentials('sonarqubeToken')
         PATH = "$dockerHome/bin:$PATH"
     }
     agent any
@@ -71,7 +73,7 @@ pipeline {
                 withPythonEnv("/usr/bin/python${params.PYTHON}") {
                     script {
                         withSonarQubeEnv('sonaqubeServer') {
-                            sh "pysonar-scanner"
+                            sh "pysonar-scanner -Dsonar.token=${pysonarCredential}"
                         }
                         timeout(time: 1, unit: 'MINUTES') {
                             def qq = waitForQualityGate()
@@ -120,11 +122,11 @@ pipeline {
 def runTest() {
     sh "poetry run pytest test/e2e/test.py test/unit/test.py test/integration/test.py --cov=./ --cov-report=xml"
 }
-
+//.pyenv-usr-bin-python3.12
 def createVirtualEnvironment(pythonVersion) {
-    sh "python$pythonVersion -m venv venv"
-    sh ". venv/bin/activate"
-    echo "Venv created"
+    //sh "python$pythonVersion -m venv venv"
+    sh ". .pyenv-usr-bin-python$pythonVersion/bin/activate"
+    echo "Pyenv Activated"
 }
 
 def updateUpgradeInstallPackages() {
