@@ -17,6 +17,8 @@ def config_infos():
 def client():
 
     def title():
+        """We provide a title or the test in production will not pass"""
+
         yield "Testing Accountings API"
 
     api.dependency_overrides[title] = title
