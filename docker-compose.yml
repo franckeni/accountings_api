@@ -15,7 +15,6 @@ services:
       TABLE_NAME: 'accounting-erp-api'
       # BASE
       API_V1_PREFIX: /api/v1
-      DEBUG: true
       PROJECT_NAME: ACCOUNTINGS ERP API
       VERSION: 0.1.0
       VERSION_NUMBER: 1
@@ -24,7 +23,6 @@ services:
       ITEMS_PER_USER: 50
       ACCESS_TOKEN_EXPIRE_MINUTES: 30  # 30 minutes
       REFRESH_TOKEN_EXPIRE_MINUTES: 10080 # 7 days :> 60 * 24 * 7
-      PRODUCTION: false
     volumes:
       - $HOME/.aws/credentials:/home/fastapi/.aws/credentials:ro
       - $HOME/.aws/config:/home/fastapi/.aws/config:ro

@@ -26,6 +26,7 @@ properties([
 
 pipeline {
     environment {
+        AWS_DEFAULT_REGION="eu-west-3"
         DOCKERHUB_ID = "fafosoule"
         dockerHome = tool "DockerLocalhost"
         pysonarCredential = credentials('sonarqubeToken')
