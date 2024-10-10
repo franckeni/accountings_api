@@ -110,6 +110,7 @@ pipeline {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'DOCKERHUB_CREDENTIAL', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                        imagePrune(CONTAINER_NAME)
                         runApp(CONTAINER_NAME, CONTAINER_TAG, USERNAME, HTTP_PORT, ENV_NAME, APP_VERSION)
                     }
                 }
@@ -149,10 +150,8 @@ def poetryConfigAndInstall(pythonVersion, poetryVersion, workspace) {
 
 def imagePrune(containerName) {
     try {
-        sh "docker network prune -f -a"
-        sh "docker image prune -f -a"
+        sh "docker system prune -f -a"
         sh "docker stop $containerName"
-        sh "docker image prune -f -a"
     } catch (ignored) {}
 }
 
