@@ -34,9 +34,8 @@ RUN set -ex \
     && pip install -r "$APP_HOME"/requirements.txt \
     && apt-get autoremove -y \
     && apt-get clean -y \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN mkdir -p /home/fastapi/.aws/
+    && rm -rf /var/lib/apt/lists/* \
+    && mkdir -p /home/fastapi/.aws/
 
 COPY ./src $APP_HOME
 COPY --chmod='+x' ./entrypoint.sh /usr/local/bin/
