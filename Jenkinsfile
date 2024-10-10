@@ -97,8 +97,8 @@ pipeline {
         stage ('Build Python FAstAPI Image and Push It to DockerHUB') {
             steps {
                 script {
-                    sh "DOCKER_BUILDKIT=1"
                     docker.withRegistry('', 'DOCKERHUB_CREDENTIAL') {
+                        sh "DOCKER_BUILDKIT=1"
                         def dockerImage = docker.build("${DOCKERHUB_ID}/${CONTAINER_NAME}:${CONTAINER_TAG}", 
                             "--network=host --pull --no-cache .")
                         dockerImage.push();
