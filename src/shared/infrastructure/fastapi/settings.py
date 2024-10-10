@@ -4,9 +4,9 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    project_name: str
+    project_name: Optional[str] = None
     version: str
-    description: str
+    description: Optional[str] = None
     admin_email: str
     DYNAMODB_URL: Optional[str] = None
     TABLE_NAME: str
