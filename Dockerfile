@@ -42,7 +42,7 @@ COPY ./entrypoint.sh ./entrypoint.sh
 RUN chmod +x ./entrypoint.sh
 
 # For Ci / CD pipeline env variables
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["./entrypoint.sh"]
 
 # Set the default user
 USER fastapi
