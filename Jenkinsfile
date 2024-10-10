@@ -170,10 +170,11 @@ def pushToImage(containerName, tag, dockerUser, dockerPassword) {
 }
 
 def runApp(containerName, tag, dockerHubUser, httpPort, envName, version) {
-    sh "docker pull  $dockerHubUser/$containerName"
+    sh "docker pull  $dockerHubUser/$containerName:$tag"
     sh "docker run \
         --rm --name $containerName $dockerHubUser/$containerName:$tag  \
-        -d -p \
+        --detach  \
+        --privileged \
         $httpPort:$httpPort \
         --env APP_ENVIRONMENT=$envName  \
         --env ALLOWED_ORIGINS='http://localhost:4200,http://localhost:4000'  \
