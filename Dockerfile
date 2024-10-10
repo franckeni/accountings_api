@@ -40,6 +40,7 @@ COPY ./aws/config /home/fastapi/.aws/
 COPY ./entrypoint.sh ./entrypoint.sh
 
 RUN chmod +x ./entrypoint.sh
+RUN chown -R fastapi:www-data .
 
 # For Ci / CD pipeline env variables
 ENTRYPOINT ["./entrypoint.sh"]
