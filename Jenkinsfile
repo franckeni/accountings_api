@@ -178,7 +178,7 @@ def runApp(containerName, tag, dockerHubUser, httpPort, envName, version) {
         --env ALLOWED_ORIGINS=http://localhost:4200,http://localhost:4000  \
         --env DYNAMODB_URL=http://localhost:8000  \
         --env TABLE_NAME=accounting-erp-$envName  \
-        --env PROJECT_NAME=STAM & HAEN HA2BI API - $envName  \
+        --env PROJECT_NAME=STAM - HAEN HA2BI API - $envName  \
         --env VERSION=$version"
     echo "Application started on port:  $httpPort (http)"
 }
