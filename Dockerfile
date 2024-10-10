@@ -33,17 +33,14 @@ RUN set -ex \
     && apt-get autoremove -y \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/* \
-    && mkdir -p /home/fastapi/.aws/ \
-    && envsubst < ./.env.temp > ./.env
+    && mkdir -p /home/fastapi/.aws/
 
 COPY ./src $APP_HOME
-COPY ./entrypoint.sh /usr/local/bin/
 COPY ./aws/config /home/fastapi/.aws/
-
-RUN chmod +x /usr/local/bin/entrypoint.sh
+COPY --chmod=775 ./entrypoint.sh ./entrypoint.sh
 
 # For Ci / CD pipeline env variables
-ENTRYPOINT ["entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
 
 # Set the default user
 USER fastapi
