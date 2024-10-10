@@ -18,6 +18,8 @@ RUN pip install "poetry==1.8.2" \
 ### Final stage
 FROM python:3.12-slim AS final
 
+ENV DOCKER_BUILDKIT=1
+
 ENV APP_HOME=/home/app
 WORKDIR $APP_HOME
 
@@ -34,12 +36,14 @@ RUN set -ex \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
 
+RUN mkdir -p /home/fastapi/.aws/
+
 COPY ./src $APP_HOME
+COPY --chmod='+x' ./entrypoint.sh /usr/local/bin/
+COPY ./aws/config /home/fastapi/.aws/
 
 # For Ci / CD pipeline env variables
-RUN envsubst < "$APP_HOME"/.env.temp > "$APP_HOME"/.env
-
-CMD ["uvicorn", "shared.infrastructure.fastapi.main:api", "--host=0.0.0.0", "--reload", "--port", "8080"]
+ENTRYPOINT ["entrypoint.sh"]
 
 # Set the default user
 USER fastapi
