@@ -4,7 +4,7 @@
 # provided to the docker container by generating a new temporary file.
 
 printenv
-envsubst < /home/app/.env.temp > /home/app/.env
+envsubst < /app/.env.temp > /app/.env
 # then we replace the original env file.
 #mv $ASSETS/env.tmp $ASSETS/env.json
 

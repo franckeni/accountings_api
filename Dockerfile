@@ -18,8 +18,6 @@ RUN pip install "poetry==1.8.2" \
 ### Final stage
 FROM python:3.12-slim AS final
 
-ENV DOCKER_BUILDKIT=1
-
 ENV APP_HOME=/home/app
 WORKDIR $APP_HOME
 

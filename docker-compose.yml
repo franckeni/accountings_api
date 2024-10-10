@@ -14,7 +14,7 @@ services:
       DYNAMODB_URL: 'http://dynamodb-local:8000'
       TABLE_NAME: 'accounting-erp-api'
       # BASE
-      API_V1_PREFIX: /api/v1
+      API_PATH_VERSION_PREFIX: /api/v1
       PROJECT_NAME: ACCOUNTINGS ERP API
       VERSION: 0.1.0
       VERSION_NUMBER: 1

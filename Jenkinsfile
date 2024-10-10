@@ -2,10 +2,16 @@ def ENV_NAME = getEnvName(env.BRANCH_NAME)
 def CONTAINER_NAME = "accountings-api-" + ENV_NAME
 def CONTAINER_TAG = getTag(env.BUILD_NUMBER, env.BRANCH_NAME)
 def HTTP_PORT = getHTTPPort(env.BRANCH_NAME)
-def EMAIL_RECIPIENTS = "franckafosoule@gmail.com"
 def POETRY_VERSION = "1.8.2"
+def EMAIL_RECIPIENTS = "franckafosoule@gmail.com"
+def ADMIN_EMAIL = "franckafosoule@gmail.com"
 def APP_VERSION = "0.1.0"
 def PROJECT_NAME = "stam-haen-api-" + ENV_NAME
+def API_PATH_VERSION_PREFIX = "/api/v1"
+def DYNAMODB_URL = 'http://localhost:8000'
+def ALLOWED_ORIGINS ='http://localhost:4200,http://localhost:4000'
+def TABLE_NAME = "accounting-erp-" + ENV_NAME
+def DESCRIPTION = "STAM and HAEN HABIBI api for accountings stuff"
 
 
 properties([
@@ -98,7 +104,6 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('', 'DOCKERHUB_CREDENTIAL') {
-                        sh "DOCKER_BUILDKIT=1"
                         def dockerImage = docker.build("${DOCKERHUB_ID}/${CONTAINER_NAME}:${CONTAINER_TAG}", 
                             "--network=host --pull --no-cache .")
                         dockerImage.push();
@@ -113,7 +118,7 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'DOCKERHUB_CREDENTIAL', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         imagePrune(CONTAINER_NAME, DOCKERHUB_ID)
-                        runApp(CONTAINER_NAME, CONTAINER_TAG, USERNAME, HTTP_PORT, ENV_NAME, PROJECT_NAME, APP_VERSION)
+                        runApp(CONTAINER_NAME, CONTAINER_TAG, USERNAME, HTTP_PORT)
                     }
                 }
             }
@@ -157,32 +162,22 @@ def imagePrune(containerName, dockerHubUser) {
     } catch (ignored) {}
 }
 
-// Not using this
-def imageBuild(containerName, tag) {
-    sh "docker build -t $containerName:$tag -t $containerName --pull --no-cache ."
-    echo "Image build complete"
-}
 
-// Not using this
-def pushToImage(containerName, tag, dockerUser, dockerPassword) {
-    sh "docker login -u $dockerUser -p $dockerPassword"
-    sh "docker tag $containerName:$tag $dockerUser/$containerName:$tag"
-    sh "docker push $dockerUser/$containerName:$tag"
-    echo "Image push complete"
-}
-
-def runApp(containerName, tag, dockerHubUser, httpPort, envName, projectName, version) {
+def runApp(containerName, tag, dockerHubUser, httpPort) {
     sh "docker pull  $dockerHubUser/$containerName:$tag"
     sh "docker run \
         --name $dockerHubUser-$containerName  \
         --rm \
         -d \
-        -e APP_ENVIRONMENT=$envName  \
-        -e ALLOWED_ORIGINS='http://localhost:4200,http://localhost:4000'  \
-        -e DYNAMODB_URL='http://localhost:8000'  \
-        -e TABLE_NAME=accounting-erp-$envName  \
-        -e PROJECT_NAME=$projectName  \
-        -e VERSION=$version \
+        -e ALLOWED_ORIGINS=${ALLOWED_ORIGINS}  \
+        -e DYNAMODB_URL=${DYNAMODB_URL}  \
+        -e TABLE_NAME=${TABLE_NAME} \
+        -e PROJECT_NAME=${PROJECT_NAME}  \
+        -e VERSION=${APP_VERSION} \
+        -e API_PATH_VERSION_PREFIX=${API_PATH_VERSION_PREFIX} \
+        -e APP_ENVIRONMENT=${APP_ENVIRONMENT} \
+        -e DESCRIPTION=${DESCRIPTION} \
+        -e ADMIN_EMAIL=${ADMIN_EMAIL} \
         -p $httpPort:$httpPort \
         $dockerHubUser/$containerName:$tag"
     echo "Application started on port:  $httpPort (http)"
