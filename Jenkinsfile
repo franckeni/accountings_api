@@ -170,6 +170,8 @@ def pushToImage(containerName, tag, dockerUser, dockerPassword) {
 }
 
 def runApp(containerName, tag, dockerHubUser, httpPort, envName, version) {
+    def projectName = "STAM - HAEN HA2BI API - " + $envName
+
     sh "docker pull  $dockerHubUser/$containerName:$tag"
     sh "docker run \
         --rm --name $dockerHubUser/$containerName:$tag  \
@@ -178,7 +180,7 @@ def runApp(containerName, tag, dockerHubUser, httpPort, envName, version) {
         -e ALLOWED_ORIGINS='http://localhost:4200,http://localhost:4000'  \
         -e DYNAMODB_URL='http://localhost:8000'  \
         -e TABLE_NAME=accounting-erp-$envName  \
-        -e PROJECT_NAME=STAM - HAEN HA2BI API - $envName  \
+        -e PROJECT_NAME=$projectName  \
         -e VERSION=$version \
         -d $dockerHubUser/$containerName:$tag"
     echo "Application started on port:  $httpPort (http)"
