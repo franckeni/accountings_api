@@ -37,7 +37,7 @@ RUN set -ex \
     && mkdir -p /home/fastapi/.aws/ \
     && chmod +x ./entrypoint.sh
 
-COPY ./src $APP_HOME/src
+COPY ./src $APP_HOME
 COPY ./aws/config /home/fastapi/.aws/
 
 RUN chown -R fastapi:www-data .
