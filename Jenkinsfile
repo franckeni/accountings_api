@@ -30,12 +30,10 @@ pipeline {
         PATH = "$dockerHome/bin:$PATH"
         ADMIN_EMAIL = "franckafosoule@gmail.com"
         APP_VERSION = "0.1.0"
-        PROJECT_NAME = "stam-haen-api-${ENV_NAME}"
         API_PATH_VERSION_PREFIX = "/api/v1"
         DYNAMODB_URL = 'http://localhost:8000'
         ALLOWED_ORIGINS ='http://localhost:4200,http://localhost:4000'
         TABLE_NAME = "accounting-erp-${ENV_NAME}"
-        DESCRIPTION = "STAM and HAEN HABIBI api for accountings stuff"
     }
     agent any
     options {
@@ -125,14 +123,12 @@ pipeline {
                             --name ${USERNAME}-${CONTAINER_NAME}  \
                             --rm \
                             -d \
-                            -e ALLOWED_ORIGINS=${ALLOWED_ORIGINS}  \
+                            -e ALLOWED_ORIGINS=${ALLOWED_ORIGINS} \
                             -e DYNAMODB_URL=${DYNAMODB_URL}  \
                             -e TABLE_NAME=${TABLE_NAME} \
-                            -e PROJECT_NAME=${PROJECT_NAME}  \
                             -e VERSION=${APP_VERSION} \
                             -e API_PATH_VERSION_PREFIX=${API_PATH_VERSION_PREFIX} \
                             -e APP_ENVIRONMENT=${ENV_NAME} \
-                            -e DESCRIPTION=${DESCRIPTION} \
                             -e ADMIN_EMAIL=${ADMIN_EMAIL} \
                             -p ${HTTP_PORT}:${HTTP_PORT} \
                             ${USERNAME}/${CONTAINER_NAME}:${CONTAINER_TAG}"
@@ -180,26 +176,6 @@ def imagePrune(containerName, dockerHubUser) {
     } catch (ignored) {}
 }
 
-
-def runApp(containerName, tag, dockerHubUser, httpPort) {
-    sh "docker pull  $dockerHubUser/$containerName:$tag"
-    sh "docker run \
-        --name $dockerHubUser-$containerName  \
-        --rm \
-        -d \
-        -e ALLOWED_ORIGINS=${ALLOWED_ORIGINS}  \
-        -e DYNAMODB_URL=${DYNAMODB_URL}  \
-        -e TABLE_NAME=${TABLE_NAME} \
-        -e PROJECT_NAME=${PROJECT_NAME}  \
-        -e VERSION=${APP_VERSION} \
-        -e API_PATH_VERSION_PREFIX=${API_PATH_VERSION_PREFIX} \
-        -e APP_ENVIRONMENT=${APP_ENVIRONMENT} \
-        -e DESCRIPTION=${DESCRIPTION} \
-        -e ADMIN_EMAIL=${ADMIN_EMAIL} \
-        -p $httpPort:$httpPort \
-        $dockerHubUser/$containerName:$tag"
-    echo "Application started on port:  $httpPort (http)"
-}
 
 def sendEmail(recipients) {
     mail(
