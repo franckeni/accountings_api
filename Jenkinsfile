@@ -30,11 +30,11 @@ pipeline {
         PATH = "$dockerHome/bin:$PATH"
         ADMIN_EMAIL = "franckafosoule@gmail.com"
         APP_VERSION = "0.1.0"
-        PROJECT_NAME = "stam-haen-api-" + ENV_NAME
+        PROJECT_NAME = "stam-haen-api-${ENV_NAME}"
         API_PATH_VERSION_PREFIX = "/api/v1"
         DYNAMODB_URL = 'http://localhost:8000'
         ALLOWED_ORIGINS ='http://localhost:4200,http://localhost:4000'
-        TABLE_NAME = "accounting-erp-" + ENV_NAME
+        TABLE_NAME = "accounting-erp-${ENV_NAME}"
         DESCRIPTION = "STAM and HAEN HABIBI api for accountings stuff"
     }
     agent any
