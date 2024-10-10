@@ -33,7 +33,8 @@ RUN set -ex \
     && apt-get autoremove -y \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/* \
-    && mkdir -p /home/fastapi/.aws/
+    && mkdir -p /home/fastapi/.aws/ \
+    && envsubst < ./.env.temp > ./.env
 
 COPY ./src $APP_HOME
 COPY ./entrypoint.sh /usr/local/bin/
