@@ -173,15 +173,17 @@ def pushToImage(containerName, tag, dockerUser, dockerPassword) {
 def runApp(containerName, tag, dockerHubUser, httpPort, envName, projectName, version) {
     sh "docker pull  $dockerHubUser/$containerName:$tag"
     sh "docker run \
-        --rm --name $dockerHubUser/$containerName:$tag  \
-        -p $httpPort:$httpPort \
+        --name $dockerHubUser/$containerName:$tag  \
+        --rm \
+        -d \
         -e APP_ENVIRONMENT=$envName  \
         -e ALLOWED_ORIGINS='http://localhost:4200,http://localhost:4000'  \
         -e DYNAMODB_URL='http://localhost:8000'  \
         -e TABLE_NAME=accounting-erp-$envName  \
         -e PROJECT_NAME=$projectName  \
         -e VERSION=$version \
-        -d $dockerHubUser/$containerName:$tag"
+        -p $httpPort:$httpPort \
+        $dockerHubUser/$containerName:$tag"
     echo "Application started on port:  $httpPort (http)"
 }
 
