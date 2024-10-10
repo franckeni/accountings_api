@@ -173,7 +173,7 @@ def pushToImage(containerName, tag, dockerUser, dockerPassword) {
 def runApp(containerName, tag, dockerHubUser, httpPort, envName, projectName, version) {
     sh "docker pull  $dockerHubUser/$containerName:$tag"
     sh "docker run \
-        --name $dockerHubUser/$containerName:$tag  \
+        --name $dockerHubUser-$containerName  \
         --rm \
         -d \
         -e APP_ENVIRONMENT=$envName  \
