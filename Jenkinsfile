@@ -173,8 +173,8 @@ def runApp(containerName, tag, dockerHubUser, httpPort, envName, version) {
     sh "docker pull  $dockerHubUser/$containerName:$tag"
     sh "docker run \
         --rm --name $containerName $dockerHubUser/$containerName:$tag  \
-        --detach  \
-        --privileged \
+        -d $dockerHubUser/$containerName:$tag \
+        -p \
         $httpPort:$httpPort \
         --env APP_ENVIRONMENT=$envName  \
         --env ALLOWED_ORIGINS='http://localhost:4200,http://localhost:4000'  \
