@@ -7,7 +7,7 @@ ENV PYTHONDONTWRITEBYTECODE 1 \
     PIP_DEFAULT_TIMEOUT=100 PYTHONUNBUFFERED=1
 
 WORKDIR /app
-COPY pyproject.toml poetry.lock .env.temp ./
+COPY pyproject.toml poetry.lock ./
 
 RUN pip install "poetry==1.8.2" \
     && poetry config virtualenvs.in-project true \
@@ -21,7 +21,8 @@ FROM python:3.12-slim AS final
 ENV APP_HOME=/home/app
 WORKDIR $APP_HOME
 
-COPY --from=build /app/requirements.txt /app/.env.temp $APP_HOME/
+COPY --from=build /app/requirements.txt $APP_HOME/
+COPY ./entrypoint.sh ./.env.temp $APP_HOME/
 
 RUN set -ex \
     && groupadd -r fastapi \
@@ -33,13 +34,12 @@ RUN set -ex \
     && apt-get autoremove -y \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/* \
-    && mkdir -p /home/fastapi/.aws/
+    && mkdir -p /home/fastapi/.aws/ \
+    && chmod +x ./entrypoint.sh
 
-COPY ./src $APP_HOME
+COPY ./src $APP_HOME/src
 COPY ./aws/config /home/fastapi/.aws/
-COPY ./entrypoint.sh ./entrypoint.sh
 
-RUN chmod +x ./entrypoint.sh
 RUN chown -R fastapi:www-data .
 
 # For Ci / CD pipeline env variables
