@@ -1,14 +1,12 @@
-def CONTAINER_NAME = "accountings-API"
 def ENV_NAME = getEnvName(env.BRANCH_NAME)
+def CONTAINER_NAME = "accountings-api-" + ENV_NAME
 def CONTAINER_TAG = getTag(env.BUILD_NUMBER, env.BRANCH_NAME)
 def HTTP_PORT = getHTTPPort(env.BRANCH_NAME)
 def EMAIL_RECIPIENTS = "franckafosoule@gmail.com"
 def POETRY_VERSION = "1.8.2"
+def APP_VERSION = "0.1.0"
 
 
-//DOCKERHUB_CREDENTIAL
-//MavenLocalhost
-// credentials('sonarqubeToken')
 properties([
   parameters([
     choice(
@@ -60,6 +58,7 @@ pipeline {
                 withPythonEnv("/usr/bin/python${params.PYTHON}") {
                     script {
                         poetryConfigAndInstall(params.PYTHON, POETRY_VERSION, WORKSPACE)
+                        populateAppEnvVariables(WORKSPACE)
                         sh "poetry run pytest -v --cov=./ --cov-report=xml"
                     }
                 }
@@ -86,20 +85,20 @@ pipeline {
             }
         }
 
-        //stage('Image Prune') {
-        //    steps {
-        //        script {
-        //            imagePrune(CONTAINER_NAME)
-        //        }
-        //    }
-        //}
+        stage('Image Prune') {
+            steps {
+                script {
+                    imagePrune(CONTAINER_NAME)
+                }
+            }
+        }
 
-        /*stage ('Build Python FAstAPI Image and Push It to DockerHUB') {
+        stage ('Build Python FAstAPI Image and Push It to DockerHUB') {
             steps {
                 script {
                     docker.withRegistry('', 'DOCKERHUB_CREDENTIAL') {
-                        def dockerImage = docker.build("${DOCKERHUB_ID}/${CONTAINER_NAME}:${TAG}", 
-                            "--network=host --pull --no-cache")
+                        def dockerImage = docker.build("${DOCKERHUB_ID}/${CONTAINER_NAME}:${CONTAINER_TAG}", 
+                            "--network=host --pull --no-cache .")
                         dockerImage.push();
                         dockerImage.push('latest');
                     }
@@ -110,12 +109,12 @@ pipeline {
         stage('Run App') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'dockerhubcredentials', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                        runApp(CONTAINER_NAME, CONTAINER_TAG, USERNAME, HTTP_PORT, ENV_NAME)
+                    withCredentials([usernamePassword(credentialsId: 'DOCKERHUB_CREDENTIAL', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                        runApp(CONTAINER_NAME, CONTAINER_TAG, USERNAME, HTTP_PORT, ENV_NAME, APP_VERSION)
                     }
                 }
             }
-        }*/
+        }
     }
     post {
         always {
@@ -130,6 +129,11 @@ pipeline {
     }
 }
 
+
+
+def populateAppEnvVariables(workspace) {
+    sh "envsubst < $workspace/.env.temp > $workspace/.env"
+}
 
 def poetryConfigAndInstall(pythonVersion, poetryVersion, workspace) {
     sh "pip$pythonVersion install poetry==$poetryVersion \
@@ -162,10 +166,21 @@ def pushToImage(containerName, tag, dockerUser, dockerPassword) {
     echo "Image push complete"
 }
 
-def runApp(containerName, tag, dockerHubUser, httpPort, envName) {
+def runApp(containerName, tag, dockerHubUser, httpPort, envName, version) {
     sh "docker pull  $dockerHubUser/$containerName"
-    sh "docker run --rm --env SPRING_ACTIVE_PROFILES=$envName -d -p $httpPort:$httpPort --name $containerName $dockerHubUser/$containerName:$tag"
-    echo "Application started on port:  ${httpPort} (http)"
+    sh "docker run \
+        --name $containerName $dockerHubUser/$containerName:$tag  \
+        --rm \
+        -d \
+        -p \
+        $httpPort:$httpPort \
+        --env APP_ENVIRONMENT=$envName  \
+        --env ALLOWED_ORIGINS=http://localhost:4200,http://localhost:4000  \
+        --env DYNAMODB_URL=http://localhost:8000  \
+        --env TABLE_NAME=accounting-erp-$envName  \
+        --env PROJECT_NAME=STAM & HAEN HA2BI API - $envName  \
+        --env VERSION=$version"
+    echo "Application started on port:  $httpPort (http)"
 }
 
 def sendEmail(recipients) {

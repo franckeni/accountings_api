@@ -4,13 +4,12 @@ FROM python:3.12-slim AS build
 ENV PYTHONDONTWRITEBYTECODE 1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
     PIP_NO_CACHE_DIR=1 \
-    PIP_DEFAULT_TIMEOUT=100 PYTHONUNBUFFERED=1 \
-    POETRY_VERSION=1.8.2
+    PIP_DEFAULT_TIMEOUT=100 PYTHONUNBUFFERED=1
 
 WORKDIR /app
 COPY pyproject.toml poetry.lock .env.temp ./
 
-RUN pip install "poetry==$POETRY_VERSION" \
+RUN pip install "poetry==1.8.2" \
     && poetry config virtualenvs.in-project true \
     && poetry install --no-root --no-ansi --no-interaction \
     && poetry export -f requirements.txt -o requirements.txt 
@@ -22,19 +21,15 @@ FROM python:3.12-slim AS final
 ENV APP_HOME=/home/app
 WORKDIR $APP_HOME
 
-COPY --from=build /app/requirements.txt /app/.env.temp $APP_HOME
+COPY --from=build /app/requirements.txt /app/.env.temp $APP_HOME/
 
-RUN set -eux \
-    groupadd -r fastapi \
-    # user non root
+RUN set -ex \
+    && groupadd -r fastapi \
     && useradd --no-log-init -r -g fastapi fastapi \
-    # 
-    && apt-get update \
+    && apt-get update -y\
     && apt-get upgrade -y \
-    #
     && apt-get --no-install-recommends install -y curl gettext-base \
     && pip install -r "$APP_HOME"/requirements.txt \
-    # 
     && apt-get autoremove -y \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
