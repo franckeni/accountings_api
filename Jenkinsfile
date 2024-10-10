@@ -5,6 +5,7 @@ def HTTP_PORT = getHTTPPort(env.BRANCH_NAME)
 def EMAIL_RECIPIENTS = "franckafosoule@gmail.com"
 def POETRY_VERSION = "1.8.2"
 def APP_VERSION = "0.1.0"
+def PROJECT_NAME = "STAM - HAEN HA2BI API - "+ ENV_NAME
 
 
 properties([
@@ -111,7 +112,7 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'DOCKERHUB_CREDENTIAL', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         imagePrune(CONTAINER_NAME)
-                        runApp(CONTAINER_NAME, CONTAINER_TAG, USERNAME, HTTP_PORT, ENV_NAME, APP_VERSION)
+                        runApp(CONTAINER_NAME, CONTAINER_TAG, USERNAME, HTTP_PORT, ENV_NAME, PROJECT_NAME, APP_VERSION)
                     }
                 }
             }
@@ -169,9 +170,7 @@ def pushToImage(containerName, tag, dockerUser, dockerPassword) {
     echo "Image push complete"
 }
 
-def runApp(containerName, tag, dockerHubUser, httpPort, envName, version) {
-    def projectName = "STAM - HAEN HA2BI API - " + $envName
-
+def runApp(containerName, tag, dockerHubUser, httpPort, envName, projectName, version) {
     sh "docker pull  $dockerHubUser/$containerName:$tag"
     sh "docker run \
         --rm --name $dockerHubUser/$containerName:$tag  \
