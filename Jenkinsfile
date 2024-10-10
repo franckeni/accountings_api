@@ -5,7 +5,7 @@ def HTTP_PORT = getHTTPPort(env.BRANCH_NAME)
 def EMAIL_RECIPIENTS = "franckafosoule@gmail.com"
 def POETRY_VERSION = "1.8.2"
 def APP_VERSION = "0.1.0"
-def PROJECT_NAME = "STAM - HAEN HA2BI API - "+ ENV_NAME
+def PROJECT_NAME = "stam-haen-api-" + ENV_NAME
 
 
 properties([
