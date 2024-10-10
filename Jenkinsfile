@@ -149,6 +149,7 @@ def poetryConfigAndInstall(pythonVersion, poetryVersion, workspace) {
 
 def imagePrune(containerName) {
     try {
+        sh "docker network prune -f -a"
         sh "docker image prune -f -a"
         sh "docker stop $containerName"
         sh "docker image prune -f -a"
@@ -173,13 +174,11 @@ def runApp(containerName, tag, dockerHubUser, httpPort, envName, version) {
     sh "docker pull  $dockerHubUser/$containerName"
     sh "docker run \
         --name $containerName $dockerHubUser/$containerName:$tag  \
-        --rm \
-        -d \
-        -p \
+        --rm -d -p \
         $httpPort:$httpPort \
         --env APP_ENVIRONMENT=$envName  \
-        --env ALLOWED_ORIGINS=http://localhost:4200,http://localhost:4000  \
-        --env DYNAMODB_URL=http://localhost:8000  \
+        --env ALLOWED_ORIGINS='http://localhost:4200,http://localhost:4000'  \
+        --env DYNAMODB_URL='http://localhost:8000'  \
         --env TABLE_NAME=accounting-erp-$envName  \
         --env PROJECT_NAME=STAM - HAEN HA2BI API - $envName  \
         --env VERSION=$version"
