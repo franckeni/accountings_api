@@ -37,7 +37,9 @@ RUN set -ex \
 
 COPY ./src $APP_HOME
 COPY ./aws/config /home/fastapi/.aws/
-COPY --chmod=775 ./entrypoint.sh ./entrypoint.sh
+COPY ./entrypoint.sh ./entrypoint.sh
+
+RUN chmod +x ./entrypoint.sh
 
 # For Ci / CD pipeline env variables
 ENTRYPOINT ["/entrypoint.sh"]
